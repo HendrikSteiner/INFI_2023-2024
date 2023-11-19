@@ -1,3 +1,5 @@
+import org.sqlite.SQLiteConfig;
+
 import javax.crypto.spec.PSource;
 import java.sql.*;
 import java.util.Arrays;
@@ -6,13 +8,14 @@ import java.util.Random;
 
 public class SQLiteJDBC {
     private static final String URL = "jdbc:sqlite:C:\\Users\\heste\\OneDrive\\Dokumente\\GitHub\\INFI_2023-2024\\sqlite-tools-win32-x86-3430100\\sqlite-tools-win32-x86-3430100\\steiner3.db";
-    static Connection c = null;
-    static Statement stmt = null;
+     private static Connection c = null;
+    private static Statement stmt = null;
 
     public static void main(String[] args)
     {
         try {
             c = erstelleDatenbank(c);
+            aktiviereFremdschluessel();
             stmt = erstelleTabelle(stmt);
             erstelleZufallszahlen();
             augabe_gerade_oder_ungerade(args);
@@ -23,7 +26,20 @@ public class SQLiteJDBC {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(1);
         }
+        finally {
+            closeResources();
+        }
     }
+
+
+
+public static void aktiviereFremdschluessel() throws SQLException {
+    stmt = c.createStatement();
+    stmt.executeUpdate("PRAGMA foreign_keys = ON");
+
+}
+
+
     public static Connection erstelleDatenbank(Connection c) throws SQLException, ClassNotFoundException
     {
         Class.forName("org.sqlite.JDBC");
@@ -36,7 +52,7 @@ public class SQLiteJDBC {
     {
         stmt = c.createStatement();
         stmt.executeUpdate("drop table if exists zufallszahlen");
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS ZUFALLSZAHLEN " +
+        String createTableSQL = "CREATE TABLE ZUFALLSZAHLEN " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT ," +
                 " value1 INT, " +
                 " value2 INT)";
@@ -65,13 +81,15 @@ public class SQLiteJDBC {
         try {
             if(args[0].equals("even"))
             {
-                ResultSet rseven = stmt.executeQuery("SELECT count(*) AS even FROM ZUFALLSZAHLEN WHERE value1 % 2 = 0");
+                String even = ("SELECT count(*) AS even FROM ZUFALLSZAHLEN WHERE value1 % 2 = 0");
+                ResultSet rseven = stmt.executeQuery(even);
                 int gerade = rseven.getInt("even");
                 System.out.println("Anzahl gerader Zufallszahlen: " + gerade);
             }
             else
             {
-                ResultSet rsodd = stmt.executeQuery("SELECT count(*) AS even FROM ZUFALLSZAHLEN WHERE value1 % 2 = 1");
+                String odd = ("SELECT count(*) AS even FROM ZUFALLSZAHLEN WHERE value1 % 2 = 1");
+                ResultSet rsodd = stmt.executeQuery(odd);
                 int ungerade = rsodd.getInt("odd");
                 System.out.println("Anzahl ungerader Zufallszahlen: " + ungerade);
             }
@@ -80,6 +98,19 @@ public class SQLiteJDBC {
         {
             System.out.println("Falsches Argument!");
 
+        }
+    }
+
+    public static void closeResources() {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (c != null) {
+                c.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
