@@ -11,14 +11,24 @@ public class ForeignKey
         try {
             connection = createDatabaseConnection();
             enableForeignKeys();
-            createTables();
-            insertIntoTables();
+            //einfaches Beispiel mit ForeignKeys:
+            //createTables();
+           // insertIntoTables();
+            //Anwendung von Set NULL:
+            createTables2();
+            insertIntoTables2();
+            deleteFromSupplier2();
+            selectFromTables2();
+
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             closeResources();
         }
     }
+
+
+
 
     private static Connection createDatabaseConnection() throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
@@ -48,7 +58,25 @@ public class ForeignKey
 
         System.out.println("Tables created successfully");
     }
+    private static void createTables2() throws SQLException {
+        statement = connection.createStatement();
+        statement.executeUpdate("DROP TABLE IF EXISTS suppliers");
+        statement.executeUpdate("CREATE TABLE suppliers (" +
+                "supplier_id INTEGER PRIMARY KEY, " +
+                "supplier_name TEXT NOT NULL, " +
+                "group_id INTEGER, " +
+                "FOREIGN KEY (group_id) REFERENCES supplier_groups(group_id)" +
+                " ON UPDATE SET NULL" +
+                " ON DELETE SET NULL)");
 
+        statement.executeUpdate("DROP TABLE IF EXISTS supplier_groups");
+        statement.executeUpdate("CREATE TABLE IF NOT EXISTS supplier_groups (" +
+                "group_id INTEGER PRIMARY KEY, " +
+                "group_name TEXT NOT NULL)");
+
+        System.out.println("Tables (with Set NULL) created successfully");
+
+    }
     private static void insertIntoTables() throws SQLException {
         String supplierGroupsData = "INSERT INTO supplier_groups (group_name) VALUES ('Domestic'), ('Global'), ('One-Time')";
         statement.executeUpdate(supplierGroupsData);
@@ -60,6 +88,29 @@ public class ForeignKey
          //statement.executeUpdate(supplier_befuellen2);
 
         System.out.println("Inserted into tables successfully");
+    }
+
+    private static void insertIntoTables2() throws SQLException
+    {
+        String supplierGroupsData = "INSERT INTO supplier_groups (group_name) VALUES ('Domestic'), ('Global'), ('One-Time')";
+        statement.executeUpdate(supplierGroupsData);
+
+        String supplierData1 = "INSERT INTO suppliers (supplier_name, group_id) VALUES('XYZ Corp', 3)";
+        statement.executeUpdate(supplierData1);
+
+        String supplierData2 = "INSERT INTO suppliers (supplier_name, group_id) VALUES('ABC Corp', 3)";
+        statement.executeUpdate(supplierData2);
+
+        System.out.println("Inserted into tables (with Set NULL successfully");
+    }
+    private static void deleteFromSupplier2() throws SQLException
+    {
+         statement.executeUpdate("DELETE FROM supplier_groups WHERE group_id = 3");
+         System.out.println("Datensatz wurde aus Tabelle Supplier gelöscht");
+    }
+    private static void selectFromTables2() throws SQLException
+    {
+       statement.executeUpdate( "SELECT * FROM suppliers");
     }
 
     private static void closeResources()
