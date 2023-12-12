@@ -22,13 +22,12 @@ public class Bestellung
 
     public static void selectFromBestellungen(Connection c, String kundenId) {
         try {
-            String query = "SELECT * FROM bestellung WHERE kundenId = ?";
-            PreparedStatement preparedStatement = c.prepareStatement(query);
-            preparedStatement.setString(1, kundenId);
+            String sql = "SELECT * FROM bestellung WHERE kundenId = '" + kundenId + "'";
+            Statement stmt = c.createStatement();
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-
+            ResultSet resultSet = stmt.executeQuery(sql);
+            while (resultSet.next())
+            {
                 int kundenIdResult = resultSet.getInt("kundenId");
                 int artikelId = resultSet.getInt("artikelId");
                 int anzahl = resultSet.getInt("anzahl");

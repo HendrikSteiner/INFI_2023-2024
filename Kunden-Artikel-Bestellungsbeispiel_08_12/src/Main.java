@@ -34,18 +34,21 @@ public class Main {
 
     public static void befuellen()throws SQLException
     {
-        Scanner scanner = new Scanner(System.in);
+        while(true)
+        {
+            Scanner scanner = new Scanner(System.in);
 
-        System.out.println("#########################################################################################");
-        System.out.println("| add Kunde [k] | add Artikel [a] | bestellen [b] | bestellung anzeigen [ba] | exit [e] |");
-        System.out.println("#########################################################################################");
+            System.out.println("#########################################################################################");
+            System.out.println("| add Kunde [k] | add Artikel [a] | bestellen [b] | bestellung anzeigen [ba] | exit [e] |");
+            System.out.println("#########################################################################################");
 
-        System.out.print("Choose an Action: ");
-        String input = scanner.nextLine();
+            System.out.print("Choose an Action: ");
+            String input = scanner.nextLine();
 
             switch (input)
             {
-                case "k": {
+                case "k":
+                {
                     System.out.print("Name: ");
                     String name = scanner.nextLine();
                     System.out.print("Email: ");
@@ -55,11 +58,11 @@ public class Main {
                 }
                 case "a": {
                     try {
-                    System.out.print("Bezeichnung: ");
-                    String bezeichnung = scanner.nextLine();
-                    System.out.print("Preis: ");
-                    String preis = scanner.nextLine();
-                    stmt.executeUpdate("INSERT INTO artikel (bezeichnung, preis) VALUES ('" + bezeichnung + "', '" + preis + "')");
+                        System.out.print("Bezeichnung: ");
+                        String bezeichnung = scanner.nextLine();
+                        System.out.print("Preis: ");
+                        String preis = scanner.nextLine();
+                        stmt.executeUpdate("INSERT INTO artikel (bezeichnung, preis) VALUES ('" + bezeichnung + "', '" + preis + "')");
                     } catch (NumberFormatException | SQLException e) {
                         System.out.println("Fehler beim Eintragen des Arikels: " + e.getMessage());
                     }
@@ -122,13 +125,13 @@ public class Main {
                             String kundenEmail = resultSet3.getString("email");
                             System.out.println("KundenID: " + id + ", Name: " + kundenName + ", Email: "+ kundenEmail);
                         }
-                    System.out.print("Kunden ID: ");
-                    String kundenId = scanner.nextLine();
-                    Bestellung.selectFromBestellungen(c, kundenId);
-                } catch (NumberFormatException e) {
-                    System.out.println("Fehler beim Eintragen der Bestellung: " + e.getMessage());
-                }
-                break;
+                        System.out.print("Kunden ID: ");
+                        String kundenId = scanner.nextLine();
+                        Bestellung.selectFromBestellungen(c, kundenId);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Fehler beim Eintragen der Bestellung: " + e.getMessage());
+                    }
+                    break;
                 }
                 case "e":
                     System.exit(0);
@@ -136,6 +139,9 @@ public class Main {
                 default:
                     System.out.println("Falsche Eingabe");
             }
+        }
+
+
     }
     public static Connection erstelleDatenbank(Connection c) throws SQLException, ClassNotFoundException
     {
