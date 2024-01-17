@@ -52,7 +52,7 @@ public class Main {
     public static void erstelleZufallszahlen() throws SQLException {
         Random random = new Random();
 
-        for (int i = 1; i < 22; i++) {
+        for (int i = 1; i < 21; i++) {
             int value1_rdm = random.nextInt(1, 11);
             int value2_mod = value1_rdm % 2;
             String tabelleBefuellen = ("INSERT INTO ZUFALLSZAHLEN (value1, value2) VALUES (" + value1_rdm + ", " + value2_mod + ")");
