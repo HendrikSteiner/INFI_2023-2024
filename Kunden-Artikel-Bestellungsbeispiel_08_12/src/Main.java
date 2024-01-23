@@ -1,3 +1,9 @@
+
+//TODOLIST:
+//nächster Schritt Lager richitg aktualisieren bei bestellung loeschen oder aktualisieren (menge updaten)
+//Bestellzeit nicht mehr doppelt ausgeben
+
+
 import javax.crypto.spec.PSource;
 import java.sql.*;
 import java.util.Arrays;
@@ -59,7 +65,9 @@ public class Main
                         String bezeichnung = scanner.nextLine();
                         System.out.print("Preis: ");
                         double preis = Double.parseDouble(scanner.nextLine());
-                        Artikel.werteEintragen(bezeichnung, preis, c);
+                        System.out.println("Menge: ");
+                        int menge = Integer.parseInt(scanner.nextLine());
+                        Artikel.werteEintragen(bezeichnung, preis, menge, c);
                     } catch (NumberFormatException e)
                     {
                         System.out.println("Fehler beim Eintragen des Arikels: " + e.getMessage());
@@ -97,12 +105,7 @@ public class Main
                 {
                     try {
                         Lager.lagerbestandanzeigen(c);
-                        System.out.print("Artikel ID: ");
-                        int artikelId = Integer.parseInt(scanner.nextLine());
-                        System.out.print("Menge: ");
-                        int menge = Integer.parseInt(scanner.nextLine());
-                        Lager.artikelBestellen(artikelId, menge, c);
-                    } catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                         System.out.println("Fehler beim Bestellen des Artikels: " + e.getMessage());
                     }
                     break;

@@ -13,6 +13,7 @@ public class Bestellung
                     "kundenId INT," +
                     "artikelId INT," +
                     "anzahl INT," +
+                    "bestellzeit TIMESTAMP," +
                     "FOREIGN KEY (kundenId) REFERENCES kunden(id)," +
                     "FOREIGN KEY (artikelId) REFERENCES artikel(id)" +
                     ");";
@@ -29,12 +30,17 @@ public class Bestellung
             Statement stmt = c.createStatement();
 
             ResultSet resultSet = stmt.executeQuery(sql);
-            while (resultSet.next())
-            {
+            while (resultSet.next()) {
                 int kundenIdResult = resultSet.getInt("kundenId");
                 int artikelId = resultSet.getInt("artikelId");
                 int anzahl = resultSet.getInt("anzahl");
-                System.out.println("Der Kunden ID: " + kundenIdResult + ", hat den Artikel mit der Artikel ID: " + artikelId + ", so oft bestellt: " + anzahl);
+                java.sql.Time bestellzeit = resultSet.getTime("bestellzeit");
+
+
+                System.out.println("Der Kunden ID: " + kundenIdResult +
+                        ", hat den Artikel mit der Artikel ID: " + artikelId +
+                        ", so oft bestellt: " + anzahl +
+                        ", Bestellzeit: " + bestellzeit);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,7 +74,7 @@ public class Bestellung
     public static void aktualisiereBestellung(Connection c) throws SQLException
     {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welche Bestellung wollen sie bearbeiten?");
+        System.out.println("Von welchem Kunden wollen sie die Bestellung bearbeiten?");
         int gewaehlteNummer = Integer.parseInt(scanner.nextLine());
         System.out.println("Neue Anzahl an Artikel");
         int anzahlArtikel = Integer.parseInt(scanner.nextLine());
@@ -87,7 +93,7 @@ public class Bestellung
     public static void loescheBestellung(Connection c) throws SQLException
     {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welche Bestellung wollen sie löschen?");
+        System.out.println("Von welchem Kunden die Bestellung wollen sie löschen?");
         int gewaehlteNummer = Integer.parseInt(scanner.nextLine());
         delete(gewaehlteNummer, c);
     }
