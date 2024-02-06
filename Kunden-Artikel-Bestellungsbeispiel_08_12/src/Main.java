@@ -2,9 +2,13 @@
 //TODOLIST:
 //nächster Schritt Lager richitg aktualisieren bei bestellung loeschen oder aktualisieren (menge updaten)
 //Bestellzeit nicht mehr doppelt ausgeben
+//  DATE Formater einbauen in amerikansiches ZB
+// bei Update und Delete Lagerbestand anpassen
+//überlgen wie import schlauer wäre
 
 
 import javax.crypto.spec.PSource;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Objects;
@@ -24,8 +28,6 @@ public class Main
             Bestellung.erstelleBestellungstabelle(c);
             Lager.erstelleTabelleLager(c);
             befuellen();
-
-            c.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(1);
@@ -35,15 +37,16 @@ public class Main
     }
 
 
-    public static void befuellen() throws SQLException, ClassNotFoundException {
+
+
+    public static void befuellen() throws SQLException, ClassNotFoundException, IOException {
         while(true)
         {
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("#####################################################################################################################################################################");
-            System.out.println("| add Kunde [k] | add Artikel [a] | bestellen [b] | bestellung anzeigen [ba] | bestellung bearbeiten [br] | bestellung loeschen [bl] | Lagerbestand [lb] | exit [e] |");
-            System.out.println("#####################################################################################################################################################################");
-
+            System.out.println("###################################################################################################################################################################################################################");
+            System.out.println("| add Kunde [k] | add kunden csv [ak] | add Artikel [a] | bestellen [b] | bestellung anzeigen [ba] | bestellung bearbeiten [br] | bestellung loeschen [bl] | Lagerbestand [lb] | import from csv [i] | exit [e] |");
+            System.out.println("###################################################################################################################################################################################################################");
             System.out.print("Choose an Action: ");
             String input = scanner.nextLine();
 
@@ -51,11 +54,15 @@ public class Main
             {
                 case "k":
                 {
-                    System.out.print("Name: ");
-                    String name = scanner.nextLine();
-                    System.out.print("Email: ");
-                    String email = scanner.nextLine();
-                    Kunde.werteEintragen(name, email, c);
+                    try {
+                        System.out.print("Name: ");
+                        String name = scanner.nextLine();
+                        System.out.print("Email: ");
+                        String email = scanner.nextLine();
+                        Kunde.werteEintragen(name, email, c);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Fehler beim Eintragen des Kundens: " + e.getMessage());
+                    }
                     break;
                 }
                 case "a":
@@ -72,6 +79,16 @@ public class Main
                     {
                         System.out.println("Fehler beim Eintragen des Arikels: " + e.getMessage());
                     }
+                    break;
+                }
+                case "ak":
+                {
+                    ExportData.kundenInCSV(c);
+                    break;
+                }
+                case "i":
+                {
+                    ImportData.importiereKundenCSV(c);
                     break;
                 }
                 case "b":
@@ -103,11 +120,7 @@ public class Main
                 }
                 case "lb":
                 {
-                    try {
-                        Lager.lagerbestandanzeigen(c);
-                        } catch (NumberFormatException e) {
-                        System.out.println("Fehler beim Bestellen des Artikels: " + e.getMessage());
-                    }
+                    Lager.lagerbestandanzeigen(c);
                     break;
                 }
                 default:

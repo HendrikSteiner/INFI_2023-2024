@@ -35,16 +35,16 @@ public class Bestellung
                 int artikelId = resultSet.getInt("artikelId");
                 int anzahl = resultSet.getInt("anzahl");
                 java.sql.Time bestellzeit = resultSet.getTime("bestellzeit");
-
-
                 System.out.println("Der Kunden ID: " + kundenIdResult +
                         ", hat den Artikel mit der Artikel ID: " + artikelId +
                         ", so oft bestellt: " + anzahl +
                         ", Bestellzeit: " + bestellzeit);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     public static void bestellungAnzeigen(Connection c) throws SQLException

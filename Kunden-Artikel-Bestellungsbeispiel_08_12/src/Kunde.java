@@ -16,11 +16,14 @@ public class Kunde
         System.out.println("Kunde table created successfully");
     }
 
-    public static void werteEintragen(String name, String email, Connection c) throws SQLException
-    {
-        Statement stmt = c.createStatement();
-        stmt.executeUpdate("INSERT INTO kunden (name, email) VALUES ('" + name + "', '" + email + "')");
-        System.out.println("Werte erfolgreich eingetragen!");
+    public static void werteEintragen(String name, String email, Connection c) throws SQLException {
+        String sql = "INSERT INTO kunden (name, email) VALUES (?, ?)";
+        try (PreparedStatement pstmt = c.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            pstmt.executeUpdate();
+            System.out.println("Werte erfolgreich eingetragen!");
+        }
     }
 
     public static void ausgabe(Connection c) throws SQLException
@@ -40,6 +43,5 @@ public class Kunde
         System.out.println("-----------------------------------------");
         System.out.println("Wer soll etwas bestellen?");
         System.out.print("Kunden ID: ");
-        int kundenId = Integer.parseInt(scanner.nextLine());
     }
 }

@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Lager {
     public static void erstelleTabelleLager(Connection c) throws SQLException {
@@ -37,19 +34,28 @@ public class Lager {
     }
 
     public static void erhoeheLagerbestand(int artikelId, int anzahl, Connection c) throws SQLException {
-        Statement stmt = c.createStatement();
+        String checkArtikelSQL = "SELECT * FROM lager WHERE artikel_id = ?";
+        String updateLagerSQL = "UPDATE lager SET menge = menge + ? WHERE artikel_id = ?";
+        String insertLagerSQL = "INSERT INTO lager (artikel_id, menge) VALUES (?, ?)";
 
-        String checkArtikelSQL = "SELECT * FROM lager WHERE artikel_id = " + artikelId;
-        boolean artikelImLager = stmt.executeQuery(checkArtikelSQL).next();
+        try (PreparedStatement checkStmt = c.prepareStatement(checkArtikelSQL)) {
+            checkStmt.setInt(1, artikelId);
+            ResultSet resultSet = checkStmt.executeQuery();
 
-        if (artikelImLager) {
-            String updateLagerSQL = "UPDATE lager SET menge = menge + " + anzahl + " WHERE artikel_id = " + artikelId;
-            stmt.executeUpdate(updateLagerSQL);
-        } else {
-            String insertLagerSQL = "INSERT INTO lager (artikel_id, menge) VALUES (" + artikelId + ", " + anzahl + ")";
-            stmt.executeUpdate(insertLagerSQL);
+            if (resultSet.next()) {
+                try (PreparedStatement updateStmt = c.prepareStatement(updateLagerSQL)) {
+                    updateStmt.setInt(1, anzahl);
+                    updateStmt.setInt(2, artikelId);
+                    updateStmt.executeUpdate();
+                }
+            } else {
+                try (PreparedStatement insertStmt = c.prepareStatement(insertLagerSQL)) {
+                    insertStmt.setInt(1, artikelId);
+                    insertStmt.setInt(2, anzahl);
+                    insertStmt.executeUpdate();
+                }
+            }
         }
-
-        stmt.close();
     }
+
 }

@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Date;
 
 public class Artikel {
@@ -32,15 +29,19 @@ public class Artikel {
         Statement stmt = c.createStatement();
 
         java.sql.Time sqlTime = new java.sql.Time(new Date().getTime());
+        String sql = "INSERT INTO artikel (bezeichnung, preis, time, menge) VALUES (?, ?, ?, ?)";
 
-        String sql = "INSERT INTO artikel (bezeichnung, preis, time, menge) VALUES " +
-                "('" + bezeichnung + "', " + preis + ", '" + sqlTime + "', " + menge + ")";
+        try (PreparedStatement preparedStatement = c.prepareStatement(sql)) {
+            preparedStatement.setString(1, bezeichnung);
+            preparedStatement.setDouble(2, preis);
+            preparedStatement.setTime(3, sqlTime);
+            preparedStatement.setInt(4, menge);
 
-
-        stmt.executeUpdate(sql);
-
+            preparedStatement.executeUpdate();
+        }
         ResultSet rs = stmt.executeQuery("SELECT MAX(ID) AS last_id FROM artikel");
-        if (rs.next()) {
+        if (rs.next())
+        {
             int lastId = rs.getInt("last_id");
 
             stmt.executeUpdate("UPDATE artikel SET time = '" + sqlTime + "' WHERE ID = " + lastId);
@@ -60,9 +61,12 @@ public class Artikel {
             return;
         }
 
-        Statement stmt = c.createStatement();
-        String updateSQL = "UPDATE lager SET menge = menge - " + menge + " WHERE artikel_id = " + artikelId;
-        stmt.executeUpdate(updateSQL);
+        String updateSQL = "UPDATE lager SET menge = menge - ? WHERE artikel_id = ? ";
+        try (PreparedStatement pstmt = c.prepareStatement(updateSQL)) {
+            pstmt.setInt(1, menge);
+            pstmt.setInt(2, artikelId);
+            pstmt.executeUpdate();
+        }
         System.out.println("Bestellung erfolgreich durchgeführt!");
     }
 

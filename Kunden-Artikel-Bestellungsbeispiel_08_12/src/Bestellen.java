@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Bestellen {
@@ -43,18 +40,22 @@ public class Bestellen {
             System.out.print("Anzahl: ");
             int anzahl = Integer.parseInt(scanner.nextLine());
 
-            if (istArtikelVerfuegbar(artikelId, anzahl, c))
-            {
-                String sql = "INSERT INTO bestellung (kundenId, artikelId, anzahl, bestellzeit) " +
-                        "VALUES (" + kundenId + ", " + artikelId + ", " + anzahl + ", NOW())";
-                stmt.executeUpdate(sql);
+            if (istArtikelVerfuegbar(artikelId, anzahl, c)) {
+                String sql = "INSERT INTO bestellung (kundenId, artikelId, anzahl, bestellzeit) VALUES (?, ?, ?, NOW())";
 
-                stmt.executeUpdate(sql);
+                try (PreparedStatement pstmt = c.prepareStatement(sql)) {
+                    pstmt.setInt(1, kundenId);
+                    pstmt.setInt(2, artikelId);
+                    pstmt.setInt(3, anzahl);
 
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 Lager.erhoeheLagerbestand(artikelId, -anzahl, c);
 
                 System.out.println("Bestellung erfolgreich eingetragen.");
-            } else {
+            }else {
                 System.out.println("Fehler: Artikel nicht auf Lager oder nicht ausreichende Menge verfügbar.");
             }
 
@@ -66,7 +67,7 @@ public class Bestellen {
 
     private static boolean istArtikelVerfuegbar(int artikelId, int anzahl, Connection c) throws SQLException {
         Statement stmt = c.createStatement();
-        String sql = "SELECT l.menge FROM lager l WHERE l.artikel_id = " + artikelId;
+        String sql = "SELECT menge FROM lager WHERE artikel_id = " + artikelId;
         ResultSet resultSet = stmt.executeQuery(sql);
 
         if (resultSet.next()) {
