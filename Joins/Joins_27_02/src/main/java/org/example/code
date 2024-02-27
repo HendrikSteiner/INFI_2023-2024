@@ -1,0 +1,16 @@
+use joins;
+show tables;
+select * from kunde;
+select * from bestellung;
+SELECT *
+FROM Kunde
+LEFT JOIN Bestellung ON Kunde.kunden_id = Bestellung.kunden_id;
+SELECT *
+FROM Kunde
+RIGHT JOIN Bestellung ON Kunde.kunden_id = Bestellung.kunden_id;
+SELECT *
+FROM Kunde
+INNER JOIN Bestellung ON Kunde.kunden_id = Bestellung.kunden_id;
+SELECT *
+FROM Kunde
+FULL JOIN Bestellung ON Kunde.kunden_id = Bestellung.kunden_id;
