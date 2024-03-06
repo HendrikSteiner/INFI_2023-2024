@@ -44,16 +44,14 @@ public class Main
         {
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("###################################################################################################################################################################################################################");
-            System.out.println("| add Kunde [k] | add kunden csv [ak] | add Artikel [a] | bestellen [b] | bestellung anzeigen [ba] | bestellung bearbeiten [br] | bestellung loeschen [bl] | Lagerbestand [lb] | import from csv [i] | exit [e] |");
-            System.out.println("###################################################################################################################################################################################################################");
+            System.out.println("###################################################################################################################################################################################################################################");
+            System.out.println("| add Kunde [k] | add kunden csv [ak] | add Artikel [a] | bestellen [b] | bestellung anzeigen [ba] | bestellung bearbeiten [br] | bestellung loeschen [bl] | Lagerbestand [lb] | import from csv [i] |  procedure [p] || exit [e] |");
+            System.out.println("###################################################################################################################################################################################################################################");
             System.out.print("Choose an Action: ");
             String input = scanner.nextLine();
 
-            switch (input)
-            {
-                case "k":
-                {
+            switch (input) {
+                case "k": {
                     try {
                         System.out.print("Name: ");
                         String name = scanner.nextLine();
@@ -65,8 +63,7 @@ public class Main
                     }
                     break;
                 }
-                case "a":
-                {
+                case "a": {
                     try {
                         System.out.print("Bezeichnung: ");
                         String bezeichnung = scanner.nextLine();
@@ -75,52 +72,48 @@ public class Main
                         System.out.println("Menge: ");
                         int menge = Integer.parseInt(scanner.nextLine());
                         Artikel.werteEintragen(bezeichnung, preis, menge, c);
-                    } catch (NumberFormatException e)
-                    {
+                    } catch (NumberFormatException e) {
                         System.out.println("Fehler beim Eintragen des Arikels: " + e.getMessage());
                     }
                     break;
                 }
-                case "ak":
-                {
+                case "ak": {
                     ExportData.kundenInCSV(c);
                     break;
                 }
-                case "i":
-                {
+                case "i": {
                     ImportData.importiereKundenCSV(c);
                     break;
                 }
-                case "b":
-                {
+                case "b": {
                     Bestellen.ausgabe(c);
                     break;
                 }
-                case "ba":
-                {
+                case "ba": {
                     Bestellung.bestellungAnzeigen(c);
                     break;
                 }
-                case "e":
-                {
+                case "e": {
                     System.exit(0);
                     break;
                 }
-                case "br":
-                {
+                case "br": {
                     Bestellung.bestellungAnzeigen(c);
                     Bestellung.aktualisiereBestellung(c);
                     break;
                 }
-                case "bl":
-                {
+                case "bl": {
                     Bestellung.bestellungAnzeigen(c);
                     Bestellung.loescheBestellung(c);
                     break;
                 }
-                case "lb":
-                {
+                case "lb": {
                     Lager.lagerbestandanzeigen(c);
+                    break;
+                }
+                case "p": {
+
+                    Artikel.proceduren(c);
                     break;
                 }
                 default:

@@ -15,6 +15,26 @@ public class Artikel {
         System.out.println("Artikel table created successfully");
     }
 
+    public static void proceduren(Connection c) throws SQLException {
+        try (CallableStatement stmt = c.prepareCall("{call ArtikelInformationen()}")) {
+            if (stmt.execute()) {
+                try (ResultSet rs = stmt.getResultSet()) {
+                    while (rs.next()) {
+                        String bezeichnung = rs.getString("bezeichnung");
+                        int menge = rs.getInt("menge");
+                        System.out.println("Artikel: " + bezeichnung + ", Menge: " + menge);
+                    }
+                }
+            } else {
+                System.out.println("Die Prozedur wurde erfolgreich aufgerufen, gibt jedoch keine Ergebnisse zurück.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Fehler beim Aufrufen der Prozedur: " + e.getMessage());
+        }
+    }
+
+
+
 
     public static void erstelleTabelleLager(Connection c) throws SQLException {
         Statement stmt = c.createStatement();
